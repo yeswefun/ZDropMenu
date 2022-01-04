@@ -28,4 +28,36 @@ public abstract class ZBaseMenuAdapter {
         当菜单关闭时的回调
      */
     protected abstract void onMenuClose(View tabView);
+    /*private List<MenuObserver> mObservers = new ArrayList<>();
+
+    public void registerDataSetObserver(MenuObserver observer) {
+        mObservers.add(observer);
+    }
+
+    public void unregisterDataSetObserver(MenuObserver observer) {
+        mObservers.remove(observer);
+    }*/
+
+
+    /*
+        关注，取消关注
+     */
+    private ZBaseMenuObserver mObserver;
+
+    public void registerDropMenuObserver(ZBaseMenuObserver observer) {
+        mObserver = observer;
+    }
+
+    public void unregisterDropMenuObserver(ZBaseMenuObserver observer) {
+        mObserver = null;
+    }
+
+    /*
+        notifyCloseMenu
+     */
+    public void notifyCloseMenu() {
+        if (mObserver != null) {
+            mObserver.notifyCloseMenu();
+        }
+    }
 }

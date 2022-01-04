@@ -20,6 +20,11 @@ import androidx.annotation.Nullable;
         ZDropLayout
             ZDropMenuLayout
             ZDropMaskView
+
+    观察者设计模式
+        选择菜单筛选条件后关闭菜单
+        如何在Adapter中调用DropMenuView的closeMenu方法?
+            ListView#notifyDataChanged
  */
 public class ZDropMenuView extends LinearLayout implements View.OnClickListener {
 
@@ -27,6 +32,9 @@ public class ZDropMenuView extends LinearLayout implements View.OnClickListener 
 
     private final Context mContext;
 
+    /*
+        适配器
+     */
     private ZBaseMenuAdapter mAdapter;
 
     /*
@@ -57,7 +65,7 @@ public class ZDropMenuView extends LinearLayout implements View.OnClickListener 
     /*
         阴影的颜色
      */
-    private final int mMaskColor = Color.parseColor("#88888888");
+    private final int mMaskColor = 0x88888888;
 
     /*
         当前打开的菜单对应的索引
@@ -91,13 +99,15 @@ public class ZDropMenuView extends LinearLayout implements View.OnClickListener 
     }
 
     /*
-        初始布局
-
         ZDropMenuView
             ZDropTabLayout
             ZDropLayout
                 ZDropMenuLayout
                 ZDropMaskView
+
+        1. 初始化布局
+            先创建一个xml布局，再加载，再findViewById
+            简单的效果用代码去创建
      */
     private void initLayout() {
 
@@ -136,6 +146,18 @@ public class ZDropMenuView extends LinearLayout implements View.OnClickListener 
     }
 
     /*
+        观察者设计模式
+     */
+    private class ZDropMenuObserver extends ZBaseMenuObserver {
+        @Override
+        public void notifyCloseMenu() {
+            closeMenu();
+        }
+    }
+
+    private ZBaseMenuObserver mMenuObserver;
+
+    /*
         adapter设计模式动态添加子View
      */
     public void setAdapter(ZBaseMenuAdapter adapter) {
@@ -144,8 +166,18 @@ public class ZDropMenuView extends LinearLayout implements View.OnClickListener 
             throw new RuntimeException("adapter cannot be null");
         }
 
+        // 注销观察者
+        if (mAdapter != null && mMenuObserver != null) {
+            mAdapter.unregisterDropMenuObserver(mMenuObserver);
+        }
+
         mAdapter = adapter;
 
+        // 注册观察者
+        mMenuObserver = new ZDropMenuObserver();
+        mAdapter.registerDropMenuObserver(mMenuObserver);
+
+        // 动态添加子View
         int count = mAdapter.getCount();
         for (int i = 0; i < count; i++) {
             View tabView = mAdapter.getTabView(i, this);
