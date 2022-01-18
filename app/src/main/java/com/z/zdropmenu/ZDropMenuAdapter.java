@@ -32,6 +32,11 @@ public class ZDropMenuAdapter extends ZBaseMenuAdapter {
         return tabView;
     }
 
+    /*
+        不同的位置显示的布局不一样
+            一开始就创建一个集合存放好，通过position来获取
+            或switch进行判断
+     */
     @Override
     protected View getMenuView(int position, ViewGroup parent) {
         TextView menuView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.view_drop_menu, parent, false);

@@ -3,6 +3,9 @@ package com.z.zdropmenu;
 import android.view.View;
 import android.view.ViewGroup;
 
+/*
+    筛选菜单的adapter
+ */
 public abstract class ZBaseMenuAdapter {
     /*
         获取条目个数
